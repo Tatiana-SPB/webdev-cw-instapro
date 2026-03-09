@@ -15,11 +15,23 @@ export function getPosts({ token }) {
       if (response.status === 401) {
         throw new Error("Нет авторизации");
       }
-
       return response.json();
     })
     .then((data) => {
-      return data.posts;
+      console.log(data);
+      const appPosts = data.posts.map((post) => {
+        return {
+          imageUrl: post.imageUrl,
+          createdAt: post.createdAt,
+          description: post.description,
+          userName: post.user.name,
+          userImg: post.user.imageUrl,
+          counterLikes: post.likes,
+          isLiked: false,
+        };
+      });
+
+      return appPosts;
     });
 }
 

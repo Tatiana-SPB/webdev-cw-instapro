@@ -15,6 +15,7 @@ import {
   removeUserFromLocalStorage,
   saveUserToLocalStorage,
 } from "./helpers.js";
+//import { posts } from "./components/postsBox.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;
@@ -58,6 +59,7 @@ export const goToPage = (newPage, data) => {
         .then((newPosts) => {
           page = POSTS_PAGE;
           posts = newPosts;
+          console.log(newPosts)
           renderApp();
         })
         .catch((error) => {
