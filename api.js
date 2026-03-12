@@ -1,12 +1,13 @@
+import { getToken } from "./index.js";
+
 // Замени на свой, чтобы получить независимый от других набор данных.
 // "боевая" версия инстапро лежит в ключе prod
 const personalKey = "tatiana-alekseeva";
 const baseHost = "https://webdev-hw-api.vercel.app";
 const postsHost = `https://wedev-api.sky.pro/api/v1/:${personalKey}/instapro`;
 
-//export let token = ;
-
 export function getPosts({ token }) {
+  console.log(postsHost);
   return fetch(postsHost, {
     method: "GET",
     headers: {
@@ -43,18 +44,30 @@ export function onAddPostClick(description, imageUrl) {
   return fetch(postsHost, {
     method: "POST",
     headers: {
-      Authorization:
-        "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k",
+      Authorization: getToken(),
     },
     body: JSON.stringify({
       description,
       imageUrl,
     }),
   }).then((response) => {
-    switch (response) {
-      case response.ok:
-        console.log(response);
+    if (response.status === 500) {
+      throw new Error("Ошибка сервера");
+    }
+    if (response.status === 401) {
+      throw new Error("Нет авторизации");
+    }
+    if (response.status === 400) {
+      throw new Error("Неверный запрос");
+    }
+    if (response.status === 201) {
+      console.log(response);
+      return response.json();
+    }
 
+    /*switch (response) {
+      case response.status === 201:
+        console.log(response);
         return response.json();
       case response.status === 500:
         throw new Error("Ошибка сервера");
@@ -64,7 +77,7 @@ export function onAddPostClick(description, imageUrl) {
         throw new Error("Неверный запрос");
       default:
         throw new Error("Неизвестная ошибка");
-    }
+    }*/
   });
 }
 

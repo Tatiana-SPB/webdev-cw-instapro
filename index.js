@@ -20,9 +20,7 @@ export let user = getUserFromLocalStorage();
 export let page = null;
 export let posts = [];
 
-//export let token = `Bearer ksdfsksdfjfsdjk`;
-
-const getToken = () => {
+export const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
   return token;
 };
@@ -116,6 +114,9 @@ const renderApp = () => {
         onAddPostClick(description, imageUrl);
         // @TODO: реализовать добавление поста в API
         console.log("Добавляю пост...", { description, imageUrl });
+        renderPostsPageComponent({
+          appEl,
+        });
         goToPage(POSTS_PAGE);
       },
       goToPage,
