@@ -1,4 +1,4 @@
-import { getPosts, onAddPostClick } from "./api.js";
+import { fetchUserPosts, getPosts, onAddPostClick } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -15,6 +15,7 @@ import {
   removeUserFromLocalStorage,
   saveUserToLocalStorage,
 } from "./helpers.js";
+import { renderUserPostsPageComponent } from "./components/user-posts-page-component.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;
@@ -69,10 +70,14 @@ export const goToPage = (newPage, data) => {
 
     if (newPage === USER_POSTS_PAGE) {
       // @@TODO: реализовать получение постов юзера из API
+      if (!data || !data.userId) {
+        throw new Error("userId не передан");
+      }
       console.log("Открываю страницу пользователя: ", data.userId);
       page = USER_POSTS_PAGE;
-      posts = [];
-      return renderApp();
+      //posts = [];
+      renderApp(data.userId);
+      return;
     }
 
     page = newPage;
@@ -130,10 +135,13 @@ const renderApp = () => {
   }
 
   if (page === USER_POSTS_PAGE) {
-    // @TODO: реализовать страницу с фотографиями отдельного пользвателя
-    appEl.innerHTML = "Здесь будет страница фотографий пользователя";
+    if (!userId) {
+      throw new Error("userId не определен");
+    }
+    renderUserPostsPageComponent(userId);
     return;
   }
+  // @TODO: реализовать страницу с фотографиями отдельного пользвателя
+  //appEl.innerHTML = "Здесь будет страница фотографий пользователя";
 };
-
 goToPage(POSTS_PAGE);

@@ -40,6 +40,13 @@ export function getPosts({ token }) {
     });
 }
 
+export function fetchUserPosts(userId) {
+  return fetch(postsHost + `/user-posts/${userId}`).then((response) => {
+      console.log(response);
+    return response.json();
+  });
+}
+
 export function onAddPostClick(description, imageUrl) {
   return fetch(postsHost, {
     method: "POST",
@@ -64,20 +71,6 @@ export function onAddPostClick(description, imageUrl) {
       console.log(response);
       return response.json();
     }
-
-    /*switch (response) {
-      case response.status === 201:
-        console.log(response);
-        return response.json();
-      case response.status === 500:
-        throw new Error("Ошибка сервера");
-      case response.status === 401:
-        throw new Error("Нет авторизации");
-      case response.status === 400:
-        throw new Error("Неверный запрос");
-      default:
-        throw new Error("Неизвестная ошибка");
-    }*/
   });
 }
 

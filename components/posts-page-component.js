@@ -65,8 +65,10 @@ export function renderPostsPageComponent(/*{ appEl }*/) {
 
   for (let userEl of document.querySelectorAll(".post-header")) {
     userEl.addEventListener("click", () => {
+      console.log(userEl.dataset.userId);
+      const userId = userEl.dataset.userId;
       goToPage(USER_POSTS_PAGE, {
-        userId: userEl.dataset.userId,
+        userId,
       });
     });
   }

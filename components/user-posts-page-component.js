@@ -1,29 +1,16 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { posts, goToPage } from "../index.js";
+import { goToPage } from "../index.js";
+import { fetchUserPosts } from "../api.js";
 
-/*import { formatDistanceToNow } from "/date-fns";
-//import { ru } from "/date-fns/locale";
-function formatDate(date) {
-  const nearDate = date;
-  nearDate.setSeconds(nearDate.getSeconds() - 15);
-  console.log(formatDistanceToNow(nearDate, { includeSeconds: true }));
-}
-formatDate(newDate())*/
-
-export function renderUserPostsPageComponent(/*{ appEl }*/) {
-  // @TODO: реализовать рендер постов из api
-  //console.log("Актуальный список постов:", posts);
+export function renderUserPostsPageComponent(userId) {
+  // @TODO: реализовать рендер страницы с фотографиями отдельного пользвателя
   const appEl = document.getElementById("app");
 
-  /**
-   * @TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
-   * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow
-   */
-
-  const postsHtml = posts
-    .map((post) => {
-      return `<li class="post">
+  fetchUserPosts(userId).then((userPosts) => {
+    const postsHtml = userPosts
+      .map((post) => {
+        return `<li class="post">
                     <div class="post-header" data-user-id="${post.userId}">
                         <img src="${post.userImageUrl}" class="post-header__user-image">
                         <p class="post-header__user-name">${post.userName}</p>
@@ -32,7 +19,7 @@ export function renderUserPostsPageComponent(/*{ appEl }*/) {
                       <img class="post-image" src="${post.imageUrl}">
                     </div>
                     <div class="post-likes">
-                      <button data-post-id="642d00579b190443860c2f32" class="like-button">
+                      <button data-post-id="${post.id}" class="like-button">
                         <img src="./assets/images/like-active.svg">
                       </button>
                       <p class="post-likes-text">
@@ -47,27 +34,29 @@ export function renderUserPostsPageComponent(/*{ appEl }*/) {
                       ${post.createdAt}
                     </p>
                   </li>`;
-    })
-    .join("");
+      })
+      .join("");
 
-  const appHtml = `
+    const appHtml = `
               <div class="page-container">
                 <div class="header-container"></div>
                 <ul class="posts">${postsHtml}
                 </ul>
               </div>`;
 
-  appEl.innerHTML = appHtml;
+    appEl.innerHTML = appHtml;
 
-  renderHeaderComponent({
-    element: document.querySelector(".header-container"),
-  });
-
-  for (let userEl of document.querySelectorAll(".post-header")) {
-    userEl.addEventListener("click", () => {
-      goToPage(USER_POSTS_PAGE, {
-        userId: userEl.dataset.userId,
-      });
+    renderHeaderComponent({
+      element: document.querySelector(".header-container"),
     });
-  }
+
+    for (let userEl of document.querySelectorAll(".post-header")) {
+      userEl.addEventListener("click", () => {
+        const userId = userEl.dataset.userId;
+        goToPage(USER_POSTS_PAGE, {
+          userId,
+        });
+      });
+    }
+  });
 }
