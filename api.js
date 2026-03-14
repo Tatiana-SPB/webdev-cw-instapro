@@ -7,7 +7,6 @@ const baseHost = "https://webdev-hw-api.vercel.app";
 const postsHost = `https://wedev-api.sky.pro/api/v1/:${personalKey}/instapro`;
 
 export function getPosts({ token }) {
-  console.log(postsHost);
   return fetch(postsHost, {
     method: "GET",
     headers: {
@@ -18,20 +17,21 @@ export function getPosts({ token }) {
       if (response.status === 401) {
         throw new Error("Нет авторизации");
       }
-      //console.log(token);
 
       return response.json();
     })
     .then((data) => {
-      //console.log(data);
       const appPosts = data.posts.map((post) => {
         return {
+          id: post.id,
           imageUrl: post.imageUrl,
           createdAt: post.createdAt,
           description: post.description,
+          userId: post.user.id,
           userName: post.user.name,
+          userLogin: post.user.login,
           userImg: post.user.imageUrl,
-          counterLikes: post.likes,
+          likes: post.likes,
           isLiked: false,
         };
       });
@@ -41,10 +41,28 @@ export function getPosts({ token }) {
 }
 
 export function fetchUserPosts(userId) {
-  return fetch(postsHost + `/user-posts/${userId}`).then((response) => {
-      console.log(response);
-    return response.json();
-  });
+  return fetch(postsHost + `/user-posts/${userId}`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      const appPosts = data.posts.map((post) => {
+        return {
+          id: post.id,
+          imageUrl: post.imageUrl,
+          createdAt: post.createdAt,
+          description: post.description,
+          userId: post.user.id,
+          userName: post.user.name,
+          userLogin: post.user.login,
+          userImg: post.user.imageUrl,
+          likes: post.likes,
+          isLiked: false,
+        };
+      });
+
+      return appPosts;
+    });
 }
 
 export function onAddPostClick(description, imageUrl) {
@@ -68,7 +86,6 @@ export function onAddPostClick(description, imageUrl) {
       throw new Error("Неверный запрос");
     }
     if (response.status === 201) {
-      console.log(response);
       return response.json();
     }
   });

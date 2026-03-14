@@ -53,9 +53,7 @@ export function renderUserPostsPageComponent(userId) {
     for (let userEl of document.querySelectorAll(".post-header")) {
       userEl.addEventListener("click", () => {
         const userId = userEl.dataset.userId;
-        goToPage(USER_POSTS_PAGE, {
-          userId,
-        });
+        renderUserPostsPageComponent(userId);
       });
     }
   });

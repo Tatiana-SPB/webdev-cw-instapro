@@ -59,7 +59,6 @@ export const goToPage = (newPage, data) => {
         .then((newPosts) => {
           page = POSTS_PAGE;
           posts = newPosts;
-          //console.log(newPosts);
           renderApp();
         })
         .catch((error) => {
@@ -70,13 +69,15 @@ export const goToPage = (newPage, data) => {
 
     if (newPage === USER_POSTS_PAGE) {
       // @@TODO: реализовать получение постов юзера из API
-      if (!data || !data.userId) {
+      const userId = data.userId;
+
+      if (!data || !userId) {
         throw new Error("userId не передан");
       }
-      console.log("Открываю страницу пользователя: ", data.userId);
+      console.log("Открываю страницу пользователя: ", userId);
       page = USER_POSTS_PAGE;
       //posts = [];
-      renderApp(data.userId);
+      renderApp(userId);
       return;
     }
 
@@ -118,7 +119,6 @@ const renderApp = () => {
       onAddPostClick(description, imageUrl) {
         onAddPostClick(description, imageUrl);
         // @TODO: реализовать добавление поста в API
-        console.log("Добавляю пост...", { description, imageUrl });
         renderPostsPageComponent({
           appEl,
         });
@@ -135,13 +135,14 @@ const renderApp = () => {
   }
 
   if (page === USER_POSTS_PAGE) {
+    // @TODO: реализовать страницу с фотографиями отдельного пользвателя
+    const userId = data.userId;
+    console.log(userId);
     if (!userId) {
       throw new Error("userId не определен");
     }
-    renderUserPostsPageComponent(userId);
-    return;
+    return renderUserPostsPageComponent({ appEl });
   }
-  // @TODO: реализовать страницу с фотографиями отдельного пользвателя
-  //appEl.innerHTML = "Здесь будет страница фотографий пользователя";
 };
+
 goToPage(POSTS_PAGE);

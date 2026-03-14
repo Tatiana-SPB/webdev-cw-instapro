@@ -52,13 +52,10 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
       });
     }
     buttonAdd.addEventListener("click", () => {
-      console.log(descriptionEl.value);
-      console.log(imageUrl);
       if (!descriptionEl.value.trim() || imageUrl == "") {
         alert("Заполните форму!");
         return;
       }
-      //const description = descriptionEl.value;
       onAddPostClick(descriptionEl.value, imageUrl);
     });
   };
