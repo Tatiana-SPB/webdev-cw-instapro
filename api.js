@@ -1,4 +1,5 @@
-import { getToken } from "./index.js";
+import { getToken, user, posts } from "./index.js";
+import { renderPostsPageComponent } from "./components/posts-page-component.js";
 
 // Замени на свой, чтобы получить независимый от других набор данных.
 // "боевая" версия инстапро лежит в ключе prod
@@ -31,8 +32,10 @@ export function getPosts({ token }) {
           userName: post.user.name,
           userLogin: post.user.login,
           userImg: post.user.imageUrl,
-          likes: post.likes,
-          isLiked: false,
+          likes: [
+            /*{ userId: user._id, userName: post.user.name }*/
+          ],
+          isLiked: post.isLiked,
         };
       });
 
@@ -56,12 +59,62 @@ export function fetchUserPosts(userId) {
           userName: post.user.name,
           userLogin: post.user.login,
           userImg: post.user.imageUrl,
-          likes: post.likes,
-          isLiked: false,
+          likes: [
+            /*{ userId: post.user.id, userName: post.user.name }*/
+          ],
+          isLiked: post.isLiked,
         };
       });
 
       return appPosts;
+    });
+}
+
+export function fetchLikePosts(postId, isLiked) {
+  if (!user || !user._id || !user.name) {
+    throw new Error("Пользователь не авторизован");
+  }
+
+  const userId = user._id;
+  const userName = user.name;
+  const method = isLiked ? "dislike" : "like";
+  console.log(user._id);
+  console.log(user.name);
+
+  return fetch(`${postsHost}/${postId}/${method}`, {
+    method: "POST",
+    headers: {
+      Authorization: getToken(),
+    },
+    body: JSON.stringify({
+      postId,
+      isLiked,
+      userId,
+      userName,
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Ошибка при обработке лайка");
+      }
+
+      console.log(response);
+      return response.json();
+    })
+    .then((data) => {
+      const index = posts.findIndex((p) => p.id === postId);
+      if (index !== -1) {
+        posts[index] = {
+          ...posts[index],
+          isLiked: !posts[index].isLiked,
+          likes: data.post.likes,
+        };
+        renderPostsPageComponent();
+      }
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error("Ошибка:", error);
     });
 }
 

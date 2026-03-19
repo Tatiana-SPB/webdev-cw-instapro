@@ -1,6 +1,6 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { goToPage } from "../index.js";
+import { user } from "../index.js";
 import { fetchUserPosts } from "../api.js";
 
 export function renderUserPostsPageComponent(userId) {

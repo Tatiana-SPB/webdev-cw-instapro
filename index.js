@@ -1,4 +1,4 @@
-import { fetchUserPosts, getPosts, onAddPostClick } from "./api.js";
+import { getPosts, onAddPostClick } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -16,6 +16,7 @@ import {
   saveUserToLocalStorage,
 } from "./helpers.js";
 import { renderUserPostsPageComponent } from "./components/user-posts-page-component.js";
+import { putLike } from "./components/likes-component.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;
