@@ -56,7 +56,10 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
         alert("Заполните форму!");
         return;
       }
-      onAddPostClick(descriptionEl.value, imageUrl);
+      onAddPostClick(
+        descriptionEl.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        imageUrl,
+      );
     });
   };
   render();

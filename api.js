@@ -32,9 +32,7 @@ export function getPosts({ token }) {
           userName: post.user.name,
           userLogin: post.user.login,
           userImg: post.user.imageUrl,
-          likes: [
-            /*{ userId: user._id, userName: post.user.name }*/
-          ],
+          likes: [],
           isLiked: post.isLiked,
         };
       });
@@ -59,9 +57,7 @@ export function fetchUserPosts(userId) {
           userName: post.user.name,
           userLogin: post.user.login,
           userImg: post.user.imageUrl,
-          likes: [
-            /*{ userId: post.user.id, userName: post.user.name }*/
-          ],
+          likes: [],
           isLiked: post.isLiked,
         };
       });
@@ -109,13 +105,13 @@ export function fetchLikePosts(postId, isLiked) {
           isLiked: !posts[index].isLiked,
           likes: data.post.likes,
         };
-        renderPostsPageComponent();
       }
       console.log(data);
     })
     .catch((error) => {
       console.error("Ошибка:", error);
     });
+  //renderPostsPageComponent();
 }
 
 export function onAddPostClick(description, imageUrl) {

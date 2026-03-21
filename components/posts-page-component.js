@@ -4,14 +4,14 @@ import { posts, user } from "../index.js";
 import { renderUserPostsPageComponent } from "./user-posts-page-component.js";
 import { fetchLikePosts } from "../api.js";
 
-/*import { formatDistanceToNow } from "/date-fns";
+/*import { formatDistanceToNow } from ;
 //import { ru } from "/date-fns/locale";
 function formatDate(date) {
   const nearDate = date;
   nearDate.setSeconds(nearDate.getSeconds() - 15);
   console.log(formatDistanceToNow(nearDate, { includeSeconds: true }));
 }
-formatDate(newDate())*/
+formatDate(newDate());*/
 
 export function renderPostsPageComponent() {
   // @TODO: реализовать рендер постов из api
@@ -88,28 +88,13 @@ export function renderPostsPageComponent() {
         return;
       }
 
-      fetchLikePosts(postId, !post.isLiked).catch((error) => {
-        console.error("Ошибка при обработке лайка:", error);
-      });
-
-      /*let isLiked = post.isLiked;
-      console.log(postId);
-      console.log(isLiked);
-      const index = posts.findIndex((user) => postId === user.id);
-      console.log(index);
-
-      if (!isLiked) {
-        post.likes.push({ id: user._id, name: user.name });
-        isLiked = true;
-        fetchLikePosts(postId, isLiked, user._id, user.name);
-        //goToPage;
-      } else {
-        post.likes.splice(index, 1);
-        post.isLiked = false;
-        fetchDislikePosts(postId, isLiked, user._id, user.name);
-        //goToPage;
-      }
-      renderPostsPageComponent();*/
+      fetchLikePosts(postId, !post.isLiked)
+        .then(() => {
+          renderPostsPageComponent();
+        })
+        .catch((error) => {
+          console.error("Ошибка при обработке лайка:", error);
+        });
     });
   }
 }
