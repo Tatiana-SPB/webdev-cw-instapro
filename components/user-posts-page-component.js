@@ -2,6 +2,7 @@ import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, user } from "../index.js";
 import { fetchUserPosts, fetchLikePosts } from "../api.js";
+import { formatDate } from "./formatDate.js";
 
 export function renderUserPostsPageComponent(userId) {
   // @TODO: реализовать рендер страницы с фотографиями отдельного пользвателя
@@ -31,7 +32,7 @@ export function renderUserPostsPageComponent(userId) {
                       ${post.description}
                     </p>
                     <p class="post-date">
-                      ${post.createdAt}
+                      ${formatDate(post.createdAt)}
                     </p>
                   </li>`;
       })

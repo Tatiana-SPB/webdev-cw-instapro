@@ -3,25 +3,11 @@ import { renderHeaderComponent } from "./header-component.js";
 import { posts, user } from "../index.js";
 import { renderUserPostsPageComponent } from "./user-posts-page-component.js";
 import { fetchLikePosts } from "../api.js";
-
-/*import { formatDistanceToNow } from ;
-//import { ru } from "/date-fns/locale";
-function formatDate(date) {
-  const nearDate = date;
-  nearDate.setSeconds(nearDate.getSeconds() - 15);
-  console.log(formatDistanceToNow(nearDate, { includeSeconds: true }));
-}
-formatDate(newDate());*/
+import { formatDate } from "./formatDate.js";
 
 export function renderPostsPageComponent() {
   // @TODO: реализовать рендер постов из api
   const appEl = document.getElementById("app");
-
-  /**
-   * @TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
-   * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow
-   */
-  console.log(posts);
 
   const postsHtml = posts
     .map((post) => {
@@ -47,7 +33,7 @@ export function renderPostsPageComponent() {
                       ${post.description}
                     </p>
                     <p class="post-date">
-                      ${post.createdAt}
+                      ${formatDate(post.createdAt)}
                     </p>
                   </li>`;
     })

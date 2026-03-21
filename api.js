@@ -111,7 +111,6 @@ export function fetchLikePosts(postId, isLiked) {
     .catch((error) => {
       console.error("Ошибка:", error);
     });
-  //renderPostsPageComponent();
 }
 
 export function onAddPostClick(description, imageUrl) {
