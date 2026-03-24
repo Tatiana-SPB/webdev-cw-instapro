@@ -12,9 +12,13 @@ export function renderPostsPageComponent() {
   const postsHtml = posts
     .map((post) => {
       return `<li class="post">
-                    <div class="post-header" data-user-id="${post.userId}">
+                    <div class="post-header" data-user-id="${post.userId
+                      .replaceAll("<", "&lt;")
+                      .replaceAll(">", "&gt;")}">
                         <img src="${post.userImg}" class="post-header__user-image">
-                        <p class="post-header__user-name">${post.userName}</p>
+                        <p class="post-header__user-name">${post.userName
+                          .replaceAll("<", "&lt;")
+                          .replaceAll(">", "&gt;")}</p>
                     </div>
                     <div class="post-image-container">
                       <img class="post-image" src="${post.imageUrl}">
@@ -29,8 +33,12 @@ export function renderPostsPageComponent() {
                       </p>
                     </div>
                     <p class="post-text">
-                      <span class="user-name">${post.userName}</span>
-                      ${post.description}
+                      <span class="user-name">${post.userName
+                        .replaceAll("<", "&lt;")
+                        .replaceAll(">", "&gt;")}</span>
+                      ${post.description
+                        .replaceAll("<", "&lt;")
+                        .replaceAll(">", "&gt;")}
                     </p>
                     <p class="post-date">
                       ${formatDate(post.createdAt)}
