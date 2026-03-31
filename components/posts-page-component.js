@@ -25,7 +25,7 @@ export function renderPostsPageComponent() {
                     </div>
                     <div class="post-likes">
                       <button class="like-button" data-post-id="${post.id}">
-                        <img src="${post.isLiked ? "./assets/images/like-not-active.svg" : "./assets/images/like-active.svg"}">
+                        <img src="${post.isLiked ? "./assets/images/like-active.svg" : "./assets/images/like-not-active.svg"}">
                         
                       </button>
                       <p class="post-likes-text">
@@ -82,7 +82,7 @@ export function renderPostsPageComponent() {
         return;
       }
 
-      fetchLikePosts(postId, !post.isLiked)
+      fetchLikePosts(postId, post.isLiked)
         .then(() => {
           renderPostsPageComponent();
         })

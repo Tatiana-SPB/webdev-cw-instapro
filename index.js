@@ -16,7 +16,6 @@ import {
   saveUserToLocalStorage,
 } from "./helpers.js";
 import { renderUserPostsPageComponent } from "./components/user-posts-page-component.js";
-import { putLike } from "./components/likes-component.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;

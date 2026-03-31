@@ -32,7 +32,7 @@ export function getPosts({ token }) {
           userName: post.user.name,
           userLogin: post.user.login,
           userImg: post.user.imageUrl,
-          likes: [],
+          likes: post.likes || [],
           isLiked: post.isLiked,
         };
       });
@@ -57,7 +57,7 @@ export function fetchUserPosts(userId) {
           userName: post.user.name,
           userLogin: post.user.login,
           userImg: post.user.imageUrl,
-          likes: [],
+          likes: post.likes || [],
           isLiked: post.isLiked,
         };
       });

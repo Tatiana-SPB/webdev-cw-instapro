@@ -9,9 +9,9 @@ export function renderUserPostsPageComponent(userId) {
   const appEl = document.getElementById("app");
 
   fetchUserPosts(userId).then((userPosts) => {
-    const postsHtml = userPosts
+    let postsHtml = userPosts
       .map((post) => {
-        return `<li class="post">
+        return `<li class="post" data-post-id="${post.id}">
                     <div class="post-header" data-user-id="${post.userId
                       .replaceAll("<", "&lt;")
                       .replaceAll(">", "&gt;")}">
@@ -24,9 +24,9 @@ export function renderUserPostsPageComponent(userId) {
                       <img class="post-image" src="${post.imageUrl}">
                     </div>
                     <div class="post-likes">
-                      <button data-post-id="${post.id}" class="like-button">
-                        <img src="${post.isLiked ? "./assets/images/like-not-active.svg" : "./assets/images/like-active.svg"}">
-                      </button>
+                      <button class="like-button" data-post-id="${post.id}">
+                        <img src="${post.isLiked ? "./assets/images/like-active.svg" : "./assets/images/like-not-active.svg"}">
+                        </button>
                       <p class="post-likes-text">
                         Нравится: <strong>${post.likes.length}</strong>
                       </p>
@@ -69,6 +69,8 @@ export function renderUserPostsPageComponent(userId) {
     for (let likeEl of document.querySelectorAll(".like-button")) {
       likeEl.addEventListener("click", () => {
         const postId = likeEl.dataset.postId;
+        let index = userPosts.findIndex((p) => p.id === postId);
+
         const post = posts.find((post) => post.id === postId);
 
         if (!post) {
@@ -81,8 +83,9 @@ export function renderUserPostsPageComponent(userId) {
           return;
         }
 
-        fetchLikePosts(postId, !post.isLiked)
+        fetchLikePosts(postId, post.isLiked)
           .then(() => {
+            console.log(post.isLiked);
             renderUserPostsPageComponent(userId);
           })
           .catch((error) => {
