@@ -26,7 +26,6 @@ export function renderPostsPageComponent() {
                     <div class="post-likes">
                       <button class="like-button" data-post-id="${post.id}">
                         <img src="${post.isLiked ? "./assets/images/like-active.svg" : "./assets/images/like-not-active.svg"}">
-                        
                       </button>
                       <p class="post-likes-text">
                         Нравится: <strong>${post.likes.length}</strong>
@@ -71,6 +70,7 @@ export function renderPostsPageComponent() {
     likeEl.addEventListener("click", () => {
       const postId = likeEl.dataset.postId;
       const post = posts.find((post) => post.id === postId);
+      let isLiked = !!post.likes.find((like) => like.id === user._id);
 
       if (!post) {
         console.error("Пост не найден");
@@ -82,8 +82,17 @@ export function renderPostsPageComponent() {
         return;
       }
 
-      fetchLikePosts(postId, post.isLiked)
-        .then(() => {
+      fetchLikePosts(postId, isLiked)
+        .then((data) => {
+          const index = posts.findIndex((p) => p.id === postId);
+          if (index !== -1) {
+            posts[index] = {
+              ...posts[index],
+              isLiked: !isLiked,
+              likes: data.post.likes,
+            };
+          }
+          console.log(data);
           renderPostsPageComponent();
         })
         .catch((error) => {

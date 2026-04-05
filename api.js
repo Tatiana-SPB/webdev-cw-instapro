@@ -74,8 +74,6 @@ export function fetchLikePosts(postId, isLiked) {
   const userId = user._id;
   const userName = user.name;
   const method = isLiked ? "dislike" : "like";
-  console.log(user._id);
-  console.log(user.name);
 
   return fetch(`${postsHost}/${postId}/${method}`, {
     method: "POST",
@@ -93,20 +91,7 @@ export function fetchLikePosts(postId, isLiked) {
       if (!response.ok) {
         throw new Error("Ошибка при обработке лайка");
       }
-
-      console.log(response);
       return response.json();
-    })
-    .then((data) => {
-      const index = posts.findIndex((p) => p.id === postId);
-      if (index !== -1) {
-        posts[index] = {
-          ...posts[index],
-          isLiked: !posts[index].isLiked,
-          likes: data.post.likes,
-        };
-      }
-      console.log(data);
     })
     .catch((error) => {
       console.error("Ошибка:", error);

@@ -4,11 +4,11 @@ import { posts, user } from "../index.js";
 import { fetchUserPosts, fetchLikePosts } from "../api.js";
 import { formatDate } from "./formatDate.js";
 
-export function renderUserPostsPageComponent(userId) {
+export function renderUserPostsPageComponent(userId, isLiked) {
   // @TODO: реализовать рендер страницы с фотографиями отдельного пользвателя
   const appEl = document.getElementById("app");
 
-  fetchUserPosts(userId).then((userPosts) => {
+  fetchUserPosts(userId, isLiked).then((userPosts) => {
     let postsHtml = userPosts
       .map((post) => {
         return `<li class="post" data-post-id="${post.id}">
@@ -25,8 +25,8 @@ export function renderUserPostsPageComponent(userId) {
                     </div>
                     <div class="post-likes">
                       <button class="like-button" data-post-id="${post.id}">
-                        <img src="${post.isLiked ? "./assets/images/like-active.svg" : "./assets/images/like-not-active.svg"}">
-                        </button>
+                        <img src="${!isLiked ? "./assets/images/like-active.svg" : "./assets/images/like-not-active.svg"}">    
+                      </button>
                       <p class="post-likes-text">
                         Нравится: <strong>${post.likes.length}</strong>
                       </p>
@@ -69,9 +69,8 @@ export function renderUserPostsPageComponent(userId) {
     for (let likeEl of document.querySelectorAll(".like-button")) {
       likeEl.addEventListener("click", () => {
         const postId = likeEl.dataset.postId;
-        let index = userPosts.findIndex((p) => p.id === postId);
-
         const post = posts.find((post) => post.id === postId);
+        let isLiked = !!post.likes.find((like) => like.id === user._id);
 
         if (!post) {
           console.error("Пост не найден");
@@ -83,10 +82,18 @@ export function renderUserPostsPageComponent(userId) {
           return;
         }
 
-        fetchLikePosts(postId, post.isLiked)
-          .then(() => {
-            console.log(post.isLiked);
-            renderUserPostsPageComponent(userId);
+        fetchLikePosts(postId, isLiked)
+          .then((data) => {
+            const index = posts.findIndex((p) => p.id === postId);
+            if (index !== -1) {
+              posts[index] = {
+                ...posts[index],
+                isLiked: isLiked,
+                likes: data.post.likes,
+              };
+            }
+            console.log(data);
+            renderUserPostsPageComponent(userId, isLiked);
           })
           .catch((error) => {
             console.error("Ошибка при обработке лайка:", error);
