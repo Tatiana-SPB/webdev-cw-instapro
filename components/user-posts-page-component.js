@@ -4,11 +4,12 @@ import { posts, user } from "../index.js";
 import { fetchUserPosts, fetchLikePosts } from "../api.js";
 import { formatDate } from "./formatDate.js";
 
-export function renderUserPostsPageComponent(userId, isLiked) {
+export function renderUserPostsPageComponent(userId) {
   // @TODO: реализовать рендер страницы с фотографиями отдельного пользвателя
   const appEl = document.getElementById("app");
 
-  fetchUserPosts(userId, isLiked).then((userPosts) => {
+  fetchUserPosts(userId).then((userPosts) => {
+    console.log(userPosts);
     let postsHtml = userPosts
       .map((post) => {
         return `<li class="post" data-post-id="${post.id}">
@@ -25,7 +26,7 @@ export function renderUserPostsPageComponent(userId, isLiked) {
                     </div>
                     <div class="post-likes">
                       <button class="like-button" data-post-id="${post.id}">
-                        <img src="${!isLiked ? "./assets/images/like-active.svg" : "./assets/images/like-not-active.svg"}">    
+                        <img src="${post.isLiked ? "./assets/images/like-active.svg" : "./assets/images/like-not-active.svg"}">    
                       </button>
                       <p class="post-likes-text">
                         Нравится: <strong>${post.likes.length}</strong>
@@ -69,8 +70,9 @@ export function renderUserPostsPageComponent(userId, isLiked) {
     for (let likeEl of document.querySelectorAll(".like-button")) {
       likeEl.addEventListener("click", () => {
         const postId = likeEl.dataset.postId;
-        const post = posts.find((post) => post.id === postId);
-        let isLiked = !!post.likes.find((like) => like.id === user._id);
+        const post = userPosts.find((post) => post.id === postId);
+
+        let isLiked = post.isLiked;
 
         if (!post) {
           console.error("Пост не найден");

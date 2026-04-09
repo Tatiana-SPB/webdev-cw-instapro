@@ -42,7 +42,12 @@ export function getPosts({ token }) {
 }
 
 export function fetchUserPosts(userId) {
-  return fetch(postsHost + `/user-posts/${userId}`)
+  return fetch(postsHost + `/user-posts/${userId}`, {
+    method: "GET",
+    headers: {
+      Authorization: getToken(),
+    },
+  })
     .then((response) => {
       return response.json();
     })
@@ -80,12 +85,6 @@ export function fetchLikePosts(postId, isLiked) {
     headers: {
       Authorization: getToken(),
     },
-    body: JSON.stringify({
-      postId,
-      isLiked,
-      userId,
-      userName,
-    }),
   })
     .then((response) => {
       if (!response.ok) {
