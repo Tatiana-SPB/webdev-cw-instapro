@@ -15,6 +15,7 @@ import {
   removeUserFromLocalStorage,
   saveUserToLocalStorage,
 } from "./helpers.js";
+import { renderUserPostsPageComponent } from "./components/user-posts-page-component.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;
@@ -58,7 +59,6 @@ export const goToPage = (newPage, data) => {
         .then((newPosts) => {
           page = POSTS_PAGE;
           posts = newPosts;
-          //console.log(newPosts);
           renderApp();
         })
         .catch((error) => {
@@ -69,10 +69,16 @@ export const goToPage = (newPage, data) => {
 
     if (newPage === USER_POSTS_PAGE) {
       // @@TODO: реализовать получение постов юзера из API
-      console.log("Открываю страницу пользователя: ", data.userId);
+      const userId = data.userId;
+
+      if (!data || !userId) {
+        throw new Error("userId не передан");
+      }
+      console.log("Открываю страницу пользователя: ", userId);
       page = USER_POSTS_PAGE;
-      posts = [];
-      return renderApp();
+      //posts = [];
+      renderApp(userId);
+      return;
     }
 
     page = newPage;
@@ -113,7 +119,6 @@ const renderApp = () => {
       onAddPostClick(description, imageUrl) {
         onAddPostClick(description, imageUrl);
         // @TODO: реализовать добавление поста в API
-        console.log("Добавляю пост...", { description, imageUrl });
         renderPostsPageComponent({
           appEl,
         });
@@ -131,8 +136,12 @@ const renderApp = () => {
 
   if (page === USER_POSTS_PAGE) {
     // @TODO: реализовать страницу с фотографиями отдельного пользвателя
-    appEl.innerHTML = "Здесь будет страница фотографий пользователя";
-    return;
+    const userId = data.userId;
+    console.log(userId);
+    if (!userId) {
+      throw new Error("userId не определен");
+    }
+    return renderUserPostsPageComponent({ appEl });
   }
 };
 

@@ -1,50 +1,46 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { posts, goToPage } from "../index.js";
+import { posts, user } from "../index.js";
+import { renderUserPostsPageComponent } from "./user-posts-page-component.js";
+import { fetchLikePosts } from "../api.js";
+import { formatDate } from "./formatDate.js";
 
-/*import { formatDistanceToNow } from "/date-fns";
-//import { ru } from "/date-fns/locale";
-function formatDate(date) {
-  const nearDate = date;
-  nearDate.setSeconds(nearDate.getSeconds() - 15);
-  console.log(formatDistanceToNow(nearDate, { includeSeconds: true }));
-}
-formatDate(newDate())*/
-
-export function renderPostsPageComponent(/*{ appEl }*/) {
+export function renderPostsPageComponent() {
   // @TODO: реализовать рендер постов из api
-  //console.log("Актуальный список постов:", posts);
   const appEl = document.getElementById("app");
-
-  /**
-   * @TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
-   * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow
-   */
 
   const postsHtml = posts
     .map((post) => {
       return `<li class="post">
-                    <div class="post-header" data-user-id="${post.userId}">
-                        <img src="${post.userImageUrl}" class="post-header__user-image">
-                        <p class="post-header__user-name">${post.userName}</p>
+                    <div class="post-header" data-user-id="${post.userId
+                      .replaceAll("<", "&lt;")
+                      .replaceAll(">", "&gt;")}">
+                        <img src="${post.userImg}" class="post-header__user-image">
+                        <p class="post-header__user-name">${post.userName
+                          .replaceAll("<", "&lt;")
+                          .replaceAll(">", "&gt;")}</p>
                     </div>
                     <div class="post-image-container">
                       <img class="post-image" src="${post.imageUrl}">
                     </div>
                     <div class="post-likes">
-                      <button data-post-id="642d00579b190443860c2f32" class="like-button">
-                        <img src="./assets/images/like-active.svg">
+                      <button class="like-button" data-post-id="${post.id}">
+                        <img src="${post.isLiked ? "./assets/images/like-active.svg" : "./assets/images/like-not-active.svg"}">
                       </button>
                       <p class="post-likes-text">
-                        Нравится: <strong>${post.likes}</strong>
+                        Нравится: <strong>${post.likes.length}</strong>
                       </p>
                     </div>
                     <p class="post-text">
-                      <span class="user-name">${post.userName}</span>
-                      ${post.description}
+                      <span class="user-name">${post.userName
+                        .replaceAll("<", "&lt;")
+                        .replaceAll(">", "&gt;")}</span>
+                      ${post.description
+                        .replaceAll("<", "&lt;")
+                        .replaceAll(">", "&gt;")}
                     </p>
                     <p class="post-date">
-                      ${post.createdAt}
+                      ${formatDate(post.createdAt)}
                     </p>
                   </li>`;
     })
@@ -65,9 +61,43 @@ export function renderPostsPageComponent(/*{ appEl }*/) {
 
   for (let userEl of document.querySelectorAll(".post-header")) {
     userEl.addEventListener("click", () => {
-      goToPage(USER_POSTS_PAGE, {
-        userId: userEl.dataset.userId,
-      });
+      const userId = userEl.dataset.userId;
+      renderUserPostsPageComponent(userId);
+    });
+  }
+
+  for (let likeEl of document.querySelectorAll(".like-button")) {
+    likeEl.addEventListener("click", () => {
+      const postId = likeEl.dataset.postId;
+      const post = posts.find((post) => post.id === postId);
+      let isLiked = !!post.likes.find((like) => like.id === user._id);
+
+      if (!post) {
+        console.error("Пост не найден");
+        return;
+      }
+
+      if (!user || !user._id) {
+        alert("Пожалуйста, авторизуйтесь");
+        return;
+      }
+
+      fetchLikePosts(postId, isLiked)
+        .then((data) => {
+          const index = posts.findIndex((p) => p.id === postId);
+          if (index !== -1) {
+            posts[index] = {
+              ...posts[index],
+              isLiked: !isLiked,
+              likes: data.post.likes,
+            };
+          }
+          console.log(data);
+          renderPostsPageComponent();
+        })
+        .catch((error) => {
+          console.error("Ошибка при обработке лайка:", error);
+        });
     });
   }
 }

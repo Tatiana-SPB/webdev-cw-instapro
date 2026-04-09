@@ -1,4 +1,5 @@
-import { getToken } from "./index.js";
+import { getToken, user, posts } from "./index.js";
+import { renderPostsPageComponent } from "./components/posts-page-component.js";
 
 // Замени на свой, чтобы получить независимый от других набор данных.
 // "боевая" версия инстапро лежит в ключе prod
@@ -7,7 +8,6 @@ const baseHost = "https://webdev-hw-api.vercel.app";
 const postsHost = `https://wedev-api.sky.pro/api/v1/:${personalKey}/instapro`;
 
 export function getPosts({ token }) {
-  console.log(postsHost);
   return fetch(postsHost, {
     method: "GET",
     headers: {
@@ -18,25 +18,82 @@ export function getPosts({ token }) {
       if (response.status === 401) {
         throw new Error("Нет авторизации");
       }
-      //console.log(token);
 
       return response.json();
     })
     .then((data) => {
-      //console.log(data);
       const appPosts = data.posts.map((post) => {
         return {
+          id: post.id,
           imageUrl: post.imageUrl,
           createdAt: post.createdAt,
           description: post.description,
+          userId: post.user.id,
           userName: post.user.name,
+          userLogin: post.user.login,
           userImg: post.user.imageUrl,
-          counterLikes: post.likes,
-          isLiked: false,
+          likes: post.likes || [],
+          isLiked: post.isLiked,
         };
       });
 
       return appPosts;
+    });
+}
+
+export function fetchUserPosts(userId) {
+  return fetch(postsHost + `/user-posts/${userId}`, {
+    method: "GET",
+    headers: {
+      Authorization: getToken(),
+    },
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      const appPosts = data.posts.map((post) => {
+        return {
+          id: post.id,
+          imageUrl: post.imageUrl,
+          createdAt: post.createdAt,
+          description: post.description,
+          userId: post.user.id,
+          userName: post.user.name,
+          userLogin: post.user.login,
+          userImg: post.user.imageUrl,
+          likes: post.likes || [],
+          isLiked: post.isLiked,
+        };
+      });
+
+      return appPosts;
+    });
+}
+
+export function fetchLikePosts(postId, isLiked) {
+  if (!user || !user._id || !user.name) {
+    throw new Error("Пользователь не авторизован");
+  }
+
+  const userId = user._id;
+  const userName = user.name;
+  const method = isLiked ? "dislike" : "like";
+
+  return fetch(`${postsHost}/${postId}/${method}`, {
+    method: "POST",
+    headers: {
+      Authorization: getToken(),
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Ошибка при обработке лайка");
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Ошибка:", error);
     });
 }
 
@@ -61,23 +118,8 @@ export function onAddPostClick(description, imageUrl) {
       throw new Error("Неверный запрос");
     }
     if (response.status === 201) {
-      console.log(response);
       return response.json();
     }
-
-    /*switch (response) {
-      case response.status === 201:
-        console.log(response);
-        return response.json();
-      case response.status === 500:
-        throw new Error("Ошибка сервера");
-      case response.status === 401:
-        throw new Error("Нет авторизации");
-      case response.status === 400:
-        throw new Error("Неверный запрос");
-      default:
-        throw new Error("Неизвестная ошибка");
-    }*/
   });
 }
 
